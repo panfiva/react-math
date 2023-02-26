@@ -35,20 +35,19 @@ export const randomPairFactory2 = (conf: { [x: number]: number }) => {
 	const random = randomNumberFactory(conf)
 	const randomPair = randomPairFactory(conf)
 
-	const selection = shuffle([4, 5, 6, 7, 8, 9])
+	const baseNumbers = shuffle([4, 5, 6, 7, 8, 9])
+	const perQuestion = 20
 
 	const randomPair2 = (question: number): [number, number] => {
-		const perQuestion = 20
-
-		if (question > selection.length * perQuestion) return randomPair()
+		if (question > baseNumbers.length * perQuestion) return randomPair()
 
 		const idx = Math.floor((question - 1) / perQuestion)
-		const a = selection[idx]
+		const a = baseNumbers[idx]
 		const b = random()
 		return a > b ? [a, b] : [b, a]
 	}
 
-	return randomPair2
+	return { fn: randomPair2, perQuestion, baseNumbers }
 }
 
 export type Operators = 'x' | '*' | '+'

@@ -9,7 +9,7 @@ import { NumberPad, NumberPadState } from '../../lib/NumberPad'
 
 /** key is number, value is weight */
 const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
-let randomPair = randomPairFactory2(weights)
+let { fn: randomPair, perQuestion, baseNumbers } = randomPairFactory2(weights)
 let firstQuestion = randomPair(1)
 
 const OPERATOR: Operators = `x`
@@ -33,12 +33,32 @@ export const Multiplication = () => {
 	})
 
 	useEffect(() => {
+		if (
+			state.item_number <= baseNumbers.length * perQuestion &&
+			(state.item_number - 1) % perQuestion === 0
+		) {
+			const idx = Math.floor((state.item_number - 1) / perQuestion)
+			const base = baseNumbers[idx]
+			notify(`Base number: ${base}`)
+		}
+	}, [state.item_number, notify, refreshDate])
+
+	useEffect(() => {
 		if (refreshDate === undefined) return
 
 		if (loadDateRef.current !== 0 && loadDateRef.current !== refreshDate) {
 			loadDateRef.current = refreshDate
-			randomPair = randomPairFactory2(weights) // change order or random bases
+
+			const {
+				fn,
+				perQuestion: v_perQuestion,
+				baseNumbers: v_baseNumbers,
+			} = randomPairFactory2(weights) // change order or random bases
+			randomPair = fn
+			perQuestion = v_perQuestion
+			baseNumbers = v_baseNumbers
 			firstQuestion = randomPair(1) // set first question using current random pair
+
 			setState({
 				answer: [],
 				errors: 0,
