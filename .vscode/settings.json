@@ -1,0 +1,40 @@
+{
+	"files.exclude": {
+		"/package-lock.json": true,
+		"/yarn.lock": true,
+		"/package.json": false,
+		"/.vscode/**": false,
+		"/node_modules/**": true,
+		"/build/**": true,
+		"/dist/**": true,
+		".eslintcache": true,
+		"/prod/**": true
+	},
+	"files.associations": {
+		"*.jsx": "javascriptreact"
+	},
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"launch": {},
+	"prettier.enable": true,
+	"prettier.enableDebugLogs": false,
+	"prettier.configPath": "./.prettierrc.js",
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"debug.showBreakpointsInOverviewRuler": true,
+	"editor.glyphMargin": false,
+	"javascript.suggest.completeJSDocs": false,
+	"typescript.suggest.completeFunctionCalls": true,
+	"javascript.suggest.completeFunctionCalls": true,
+	"typescript.suggest.completeJSDocs": false,
+	"javascript.preferences.jsxAttributeCompletionStyle": "none",
+	"typescript.preferences.jsxAttributeCompletionStyle": "none",
+	"javascript.suggest.autoImports": false,
+	"typescript.suggest.autoImports": false,
+	"search.exclude": {
+		"/.yarn": true,
+		"/build/**.*": true
+	},
+	"search.useIgnoreFiles": false
+}
