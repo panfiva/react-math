@@ -12,7 +12,7 @@ const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
 const randomPair = randomPairFactory2(weights)
 const firstQuestion = randomPair(1)
 
-const OPERATOR = `x`
+const OPERATOR: Operators = `x`
 
 export const Multiplication = () => {
 	const notify = useNotify()

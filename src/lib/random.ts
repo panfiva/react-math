@@ -36,8 +36,8 @@ export const randomPairFactory2 = (conf: { [x: number]: number }) => {
 	const randomPair = randomPairFactory(conf)
 
 	const randomPair2 = (question: number): [number, number] => {
-		const selection = [4, 6, 7, 8, 9]
-		const perQuestion = 15
+		const selection = shuffle([4, 5, 6, 7, 8, 9])
+		const perQuestion = 20
 
 		if (question > selection.length * perQuestion) return randomPair()
 
@@ -55,5 +55,22 @@ export type Operators = 'x' | '*' | '+'
 export const checkAnswer = (operator: Operators, a: number, b: number, c: number) => {
 	if (operator === 'x' || operator === '*') return a * b === c
 	else return a + b === c
+}
+
+function shuffle(array: number[]) {
+	let currentIndex = array.length,
+		randomIndex
+
+	// While there remain elements to shuffle.
+	while (currentIndex !== 0) {
+		// Pick a remaining element.
+		randomIndex = Math.floor(Math.random() * currentIndex)
+		currentIndex--
+
+		// And swap it with the current element.
+		;[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
+	}
+
+	return array
 }
 
