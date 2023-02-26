@@ -35,8 +35,9 @@ export const randomPairFactory2 = (conf: { [x: number]: number }) => {
 	const random = randomNumberFactory(conf)
 	const randomPair = randomPairFactory(conf)
 
+	const selection = shuffle([4, 5, 6, 7, 8, 9])
+
 	const randomPair2 = (question: number): [number, number] => {
-		const selection = shuffle([4, 5, 6, 7, 8, 9])
 		const perQuestion = 20
 
 		if (question > selection.length * perQuestion) return randomPair()
