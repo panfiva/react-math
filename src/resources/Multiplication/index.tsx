@@ -120,7 +120,7 @@ export const Multiplication = () => {
 		<Fragment>
 			<SafeTitle title='Multiplication' />
 
-			<Box sx={{ p: 1, height: '100%' }}>
+			<Box sx={{ p: 1 }}>
 				<Box sx={{ p: 2, fontSize: '1.2rem', display: 'flex', width: '100%' }}>
 					<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
 						Question: {state.item_number}
@@ -151,7 +151,7 @@ export const NumberPad = (props: {
 	const submitDisabled: boolean = state.answer.length === 0
 
 	return (
-		<Box sx={{ p: 0, height: '100%', width: 'fit-content' }}>
+		<Box sx={{ p: 0, width: 'fit-content' }}>
 			<div>
 				<NumberButton number={1} setState={setState} />
 				<NumberButton number={2} setState={setState} />
