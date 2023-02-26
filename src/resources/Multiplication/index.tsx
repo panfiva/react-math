@@ -9,8 +9,8 @@ import { NumberPad, NumberPadState } from '../../lib/NumberPad'
 
 /** key is number, value is weight */
 const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
-const randomPair = randomPairFactory2(weights)
-const firstQuestion = randomPair(1)
+let randomPair = randomPairFactory2(weights)
+let firstQuestion = randomPair(1)
 
 const OPERATOR: Operators = `x`
 
@@ -37,6 +37,8 @@ export const Multiplication = () => {
 
 		if (loadDateRef.current !== 0 && loadDateRef.current !== refreshDate) {
 			loadDateRef.current = refreshDate
+			randomPair = randomPairFactory2(weights) // change order or random bases
+			firstQuestion = randomPair(1) // set first question using current random pair
 			setState({
 				answer: [],
 				errors: 0,
