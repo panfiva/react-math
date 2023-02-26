@@ -17,7 +17,10 @@ const OPERATOR = `x`
 export const Multiplication = () => {
 	const notify = useNotify()
 	const dataProvider = useDataProvider()
-	const { data: refreshDate } = useQuery([''], () => dataProvider.getCurrentDate())
+	const { data: refreshDate } = useQuery([''], () => dataProvider.getCurrentDate(), {
+		cacheTime: 3600000,
+		refetchOnWindowFocus: false,
+	})
 
 	const loadDateRef = useRef<number>(0)
 
