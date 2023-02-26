@@ -10,7 +10,7 @@ import {
 } from 'react-admin'
 import { styled } from '@mui/material/styles'
 import { ReactQueryDevtools } from 'react-query/devtools'
-// import AddCircleIcon from '@mui/icons-material/AddCircleOutline'
+import AddCircleIcon from '@mui/icons-material/AddCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 
 const Menu = (props: MenuProps) => {
@@ -23,7 +23,7 @@ const Menu = (props: MenuProps) => {
 	return (
 		<RaMenu {...props}>
 			<DashboardMenuItem onClick={() => setOpen(false)} />
-			{/* <MenuItemLink to='/addition' primaryText='Addition' leftIcon={<AddCircleIcon />} /> */}
+			<MenuItemLink to='/addition' primaryText='Addition' leftIcon={<AddCircleIcon />} />
 			<MenuItemLink
 				to='/multiplication'
 				primaryText='Multiplication'

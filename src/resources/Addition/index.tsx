@@ -12,9 +12,9 @@ const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
 const randomPair = randomPairFactory2(weights)
 const firstQuestion = randomPair(1)
 
-const OPERATOR = `x`
+const OPERATOR: Operators = `+`
 
-export const Multiplication = () => {
+export const Addition = () => {
 	const notify = useNotify()
 	const dataProvider = useDataProvider()
 	const { data: refreshDate } = useQuery([''], () => dataProvider.getCurrentDate())
@@ -71,7 +71,7 @@ export const Multiplication = () => {
 
 	return (
 		<Fragment>
-			<SafeTitle title='Multiplication' />
+			<SafeTitle title='Addition' />
 
 			<Box sx={{ p: 1 }}>
 				<Box sx={{ p: 2, fontSize: '1.2rem', display: 'flex', width: '100%' }}>

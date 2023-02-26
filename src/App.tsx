@@ -5,7 +5,7 @@ import { dataProvider } from './resources/dataProvider'
 import { Route } from 'react-router-dom'
 
 import { Apps } from './resources/Apps'
-// import { Addition } from './resources/Addition'
+import { Addition } from './resources/Addition'
 import { Multiplication } from './resources/Multiplication'
 
 import { i18nProvider } from './lib/messages'
@@ -58,7 +58,7 @@ function Resources() {
 			disableTelemetry
 		>
 			<CustomRoutes>
-				{/* <Route path='/addition/*' element={<Addition />} /> */}
+				<Route path='/addition/*' element={<Addition />} />
 				<Route path='/Multiplication/*' element={<Multiplication />} />
 			</CustomRoutes>
 		</AdminUI>

@@ -21,7 +21,7 @@ export const Apps = (): JSX.Element | null => {
 			<SafeTitle title='Apps' />
 			<Box sx={{ p: 1, height: '100%' }}>
 				<Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-					{/* <Item resource='addition' title='Addition' /> */}
+					<Item resource='addition' title='Addition' />
 					<Item resource='Multiplication' title='Multiplication' />
 				</Box>
 			</Box>
