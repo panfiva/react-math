@@ -55,7 +55,7 @@ function randomFnFactory() {
 }
 
 function randomFnFactoryAddition() {
-	const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
+	const weights = { 2: 10, 3: 10, 4: 10, 5: 10, 6: 5, 7: 5, 8: 5, 9: 5 }
 	return randomPairFactory2({ weights, baseNumbers: [1, 2, 3], perQuestion: 15 })
 }
 

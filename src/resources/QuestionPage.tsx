@@ -26,13 +26,15 @@ export const QuestionPage = (props: QuestionPageProps) => {
 	const { data: refreshDate } = useQuery([''], () => dataProvider.getCurrentDate(), {
 		cacheTime: 3600000,
 		refetchOnWindowFocus: false,
+		refetchOnMount: false,
 	})
 
 	const loadDateRef = useRef<number>(0)
 	const randomPairRef = useRef<TRandomFn>(undefined as any)
 	if (randomPairRef.current === undefined) {
-		randomPairRef.current = randomFnFactory()
 		console.groupEnd() // close group if we have one open from a previous component
+		console.clear()
+		randomPairRef.current = randomFnFactory()
 	}
 
 	const [state, setState] = useState<NumberPadState>(() => {
@@ -74,6 +76,7 @@ export const QuestionPage = (props: QuestionPageProps) => {
 			loadDateRef.current = refreshDate
 
 			console.groupEnd()
+			console.clear()
 
 			randomPairRef.current = randomFnFactory() // change order or random bases
 
