@@ -30,7 +30,10 @@ export const QuestionPage = (props: QuestionPageProps) => {
 
 	const loadDateRef = useRef<number>(0)
 	const randomPairRef = useRef<TRandomFn>(undefined as any)
-	if (randomPairRef.current === undefined) randomPairRef.current = randomFnFactory()
+	if (randomPairRef.current === undefined) {
+		randomPairRef.current = randomFnFactory()
+		console.groupEnd() // close group if we have one open from a previous component
+	}
 
 	const [state, setState] = useState<NumberPadState>(() => {
 		let firstQuestion = randomPairRef.current(1)
@@ -49,6 +52,12 @@ export const QuestionPage = (props: QuestionPageProps) => {
 
 		return newState
 	})
+
+	useEffect(() => {
+		return () => {
+			console.groupEnd() // close console group on unmount
+		}
+	}, [])
 
 	// NOTIFY BASE CHANGE
 	useEffect(() => {
@@ -96,14 +105,15 @@ export const QuestionPage = (props: QuestionPageProps) => {
 
 			if (isCorrect) {
 				const newState = { ...state }
-				const newQuestion = randomPairRef.current(newState.item_number + 1)
-				newState.answer = []
+				let newQuestion = randomPairRef.current(newState.item_number + 1, {
+					previousPair: state.question,
+				})
 				newState.item_number++
 				newState.correct++
 				newState.question = newQuestion.data
 				newState.baseChanged = newQuestion.meta.baseChanged
 				newState.base = newQuestion.meta.base
-
+				newState.answer = []
 				console.groupEnd()
 				consoleGroup(operator, newState)
 

@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash'
+
 const randomNumbersAr = (conf: { [x: number]: number }) => {
 	let ar: number[] = []
 	Object.keys(conf).forEach((n) => {
@@ -31,7 +33,13 @@ export const randomPairFactory = (conf: { [x: number]: number }) => {
 	return randomPair
 }
 
-export type TRandomFn = (/** the number of question to be generated */ question_number: number) => {
+export type TRandomFn = (
+	/** the number of question to be generated */ question_number: number,
+	options?: {
+		/** previous answer; if provided, will try to generate a pair different from previous one */
+		previousPair?: [number, number]
+	}
+) => {
 	/** pair of generated numbers */
 	data: [number, number]
 	meta: {
@@ -63,10 +71,10 @@ export const randomPairFactory2 = (props: {
 	type TMeta = { base?: number | undefined; baseChanged: boolean }
 	let meta: TMeta = { base: undefined, baseChanged: false }
 
-	const randomPair2 = (
-		question: number
-	): { data: [/** first number*/ number, /** second number */ number]; meta: TMeta } => {
+	const randomPair2: TRandomFn = (question, options) => {
 		// console.debug({ question, len: baseNumbers.length, perQuestion })
+
+		const previous = options?.previousPair
 
 		if (question > baseNumbers.length * perQuestion) {
 			let newMeta: TMeta
@@ -78,11 +86,31 @@ export const randomPairFactory2 = (props: {
 				newMeta = meta
 			}
 			meta = newMeta
+
+			let data = randomPair()
+
+			if (previous) {
+				let n: number = 1
+				while (isEqual(data.sort(), previous.sort()) && n <= 5) {
+					data = randomPair()
+					n++
+				}
+			}
+
 			return { data: randomPair(), meta }
 		} else {
 			const idx = Math.floor((question - 1) / perQuestion)
 			const a = baseNumbers[idx]
-			const b = random()
+			let b = random()
+
+			if (previous) {
+				let n: number = 1
+				while (isEqual([a, b].sort(), previous.sort()) && n <= 5) {
+					console.log('TRY')
+					b = random()
+					n++
+				}
+			}
 
 			let newMeta: TMeta
 
