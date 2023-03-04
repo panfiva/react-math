@@ -11,6 +11,8 @@ export type NumberPadState = {
 	answer: number[]
 	correct: number
 	question: [number, number]
+	baseChanged: boolean
+	base: number | undefined
 }
 
 export const NumberPad = (props: {

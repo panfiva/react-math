@@ -5,11 +5,12 @@ import { dataProvider } from './resources/dataProvider'
 import { Route } from 'react-router-dom'
 
 import { Apps } from './resources/Apps'
-import { Addition } from './resources/Addition'
-import { Multiplication } from './resources/Multiplication'
+import { QuestionPage } from './resources/QuestionPage'
 
 import { i18nProvider } from './lib/messages'
 import Layout from './Layout'
+
+import { randomPairFactory2 } from './lib/random'
 
 import merge from 'lodash/merge'
 import { Helmet } from 'react-helmet'
@@ -47,6 +48,24 @@ const theme = merge({}, defaultTheme, {
 })
 
 const TITLE = 'Math App'
+
+function randomFnFactory() {
+	const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
+	return randomPairFactory2({ weights, baseNumbers: [4, 6, 7, 8, 9], perQuestion: 50 })
+}
+
+function randomFnFactoryAddition() {
+	const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
+	return randomPairFactory2({ weights, baseNumbers: [1, 2, 3], perQuestion: 15 })
+}
+
+export const Addition = () => {
+	return <QuestionPage operator='+' titleFn='Addition' randomFnFactory={randomFnFactoryAddition} />
+}
+
+export const Multiplication = () => {
+	return <QuestionPage operator='x' titleFn='Multiplication' randomFnFactory={randomFnFactory} />
+}
 
 function Resources() {
 	return (

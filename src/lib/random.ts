@@ -31,23 +31,77 @@ export const randomPairFactory = (conf: { [x: number]: number }) => {
 	return randomPair
 }
 
-export const randomPairFactory2 = (conf: { [x: number]: number }) => {
-	const random = randomNumberFactory(conf)
-	const randomPair = randomPairFactory(conf)
+export type TRandomFn = (/** the number of question to be generated */ question_number: number) => {
+	/** pair of generated numbers */
+	data: [number, number]
+	meta: {
+		/** base number that is being generated; if undefined, random numbers are generated */
+		base?: number | undefined
+		/** indicates if base has changed */
+		baseChanged: boolean
+	}
+}
 
-	const baseNumbers = shuffle([4, 5, 6, 7, 8, 9])
-	const perQuestion = 20
+export const randomPairFactory2 = (props: {
+	/** object that controls probability: `{<number>:<weight>}` */
+	weights: { [x: number]: number }
+	/** array of numbers that will be cycled through as weights */
+	baseNumbers: number[]
+	/** questions per base */
+	perQuestion: number
+}) => {
+	const { weights, perQuestion } = props
 
-	const randomPair2 = (question: number): [number, number] => {
-		if (question > baseNumbers.length * perQuestion) return randomPair()
+	const baseNumbers = shuffle(props.baseNumbers)
 
-		const idx = Math.floor((question - 1) / perQuestion)
-		const a = baseNumbers[idx]
-		const b = random()
-		return a > b ? [a, b] : [b, a]
+	console.log('baseNumbers:', baseNumbers)
+	console.log('per base:', perQuestion)
+
+	const random = randomNumberFactory(weights)
+	const randomPair = randomPairFactory(weights)
+
+	type TMeta = { base?: number | undefined; baseChanged: boolean }
+	let meta: TMeta = { base: undefined, baseChanged: false }
+
+	const randomPair2 = (
+		question: number
+	): { data: [/** first number*/ number, /** second number */ number]; meta: TMeta } => {
+		// console.debug({ question, len: baseNumbers.length, perQuestion })
+
+		if (question > baseNumbers.length * perQuestion) {
+			let newMeta: TMeta
+			if (meta.base !== undefined) {
+				newMeta = { base: undefined, baseChanged: true }
+			} else if (meta.base === undefined && meta.baseChanged === true) {
+				newMeta = { base: undefined, baseChanged: false }
+			} else {
+				newMeta = meta
+			}
+			meta = newMeta
+			return { data: randomPair(), meta }
+		} else {
+			const idx = Math.floor((question - 1) / perQuestion)
+			const a = baseNumbers[idx]
+			const b = random()
+
+			let newMeta: TMeta
+
+			if (meta.base !== a) {
+				newMeta = { base: a, baseChanged: true }
+			} else if (meta.base === a && meta.baseChanged === true) {
+				newMeta = { base: a, baseChanged: false }
+			} else {
+				newMeta = meta
+			}
+			meta = newMeta
+
+			const pair: [number, number] = a > b ? [a, b] : [b, a]
+
+			return { data: pair, meta }
+		}
 	}
 
-	return { fn: randomPair2, perQuestion, baseNumbers }
+	return randomPair2
 }
 
 export type Operators = 'x' | '*' | '+'
