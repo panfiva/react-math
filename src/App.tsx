@@ -6,11 +6,12 @@ import { Route } from 'react-router-dom'
 
 import { Apps } from './resources/Apps'
 import { QuestionPage } from './resources/QuestionPage'
+import { SelectBaseQuestionPage } from './resources/SelectBase'
 
 import { i18nProvider } from './lib/messages'
 import Layout from './Layout'
 
-import { randomPairFactory2 } from './lib/random'
+import { randomPairFactory_pickBase, shuffle } from './lib/random'
 
 import merge from 'lodash/merge'
 import { Helmet } from 'react-helmet'
@@ -49,22 +50,33 @@ const theme = merge({}, defaultTheme, {
 
 const TITLE = 'Math App'
 
-function randomFnFactory() {
-	const weights = { 2: 5, 3: 12, 4: 15, 5: 12, 6: 16, 7: 16, 8: 16, 9: 16 }
-	return randomPairFactory2({ weights, baseNumbers: [4, 6, 7, 8, 9], perQuestion: 50 })
-}
+const multiplicationWeights = { 2: 5, 3: 10, 4: 15, 5: 7, 6: 15, 7: 15, 8: 15, 9: 15 }
+const additionWeights = { 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10 }
 
-function randomFnFactoryAddition() {
-	const weights = { 2: 10, 3: 10, 4: 10, 5: 10, 6: 5, 7: 5, 8: 5, 9: 5 }
-	return randomPairFactory2({ weights, baseNumbers: [1, 2, 3], perQuestion: 15 })
+function randAddition() {
+	const weights = additionWeights
+	return randomPairFactory_pickBase({
+		weights,
+		baseNumbers: [1, 2, 3],
+		perQuestion: 25,
+		randomize_base: true,
+	})
 }
 
 export const Addition = () => {
-	return <QuestionPage operator='+' titleFn='Addition' randomFnFactory={randomFnFactoryAddition} />
+	return <QuestionPage operator='+' titleFn='Addition' randomFnFactory={randAddition} />
 }
 
 export const Multiplication = () => {
-	return <QuestionPage operator='x' titleFn='Multiplication' randomFnFactory={randomFnFactory} />
+	return (
+		<SelectBaseQuestionPage
+			operator='x'
+			title='Multiplication'
+			perQuestion={50}
+			weights={multiplicationWeights}
+			starting_base={shuffle([4, 6, 7, 8, 9]).slice(0, 3)}
+		/>
+	)
 }
 
 function Resources() {
@@ -78,7 +90,7 @@ function Resources() {
 		>
 			<CustomRoutes>
 				<Route path='/addition/*' element={<Addition />} />
-				<Route path='/Multiplication/*' element={<Multiplication />} />
+				<Route path='/multiplication/*' element={<Multiplication />} />
 			</CustomRoutes>
 		</AdminUI>
 	)

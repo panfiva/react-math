@@ -16,7 +16,8 @@ export const randomNumberFactory = (conf: { [x: number]: number }) => {
 	const len = ar.length
 
 	return () => {
-		const index = Math.floor(Math.random() * len)
+		const r = Math.random()
+		const index = Math.floor(r * len)
 		return ar[index]
 	}
 }
@@ -33,6 +34,17 @@ export const randomPairFactory = (conf: { [x: number]: number }) => {
 	return randomPair
 }
 
+type TMeta = {
+	/** base number that is being generated; if undefined, random numbers are generated */
+	base?: number | undefined
+	/** indicates if base has changed */
+	baseChanged: boolean
+	/** indicates if the question is a final question */
+	last_question: boolean
+	/** indicates if final question was asked */
+	completed: boolean
+}
+
 export type TRandomFn = (
 	/** the number of question to be generated */ question_number: number,
 	options?: {
@@ -42,62 +54,39 @@ export type TRandomFn = (
 ) => {
 	/** pair of generated numbers */
 	data: [number, number]
-	meta: {
-		/** base number that is being generated; if undefined, random numbers are generated */
-		base?: number | undefined
-		/** indicates if base has changed */
-		baseChanged: boolean
-	}
+	meta: TMeta
 }
 
-export const randomPairFactory2 = (props: {
+/** factory function
+ * Creates randomly picks a base number from `baseNumbers` and randomly ads another number based on provided `weights`;
+ * Each number generates `perQuestion` number of questions.
+ */
+export const randomPairFactory_pickBase = (props: {
 	/** object that controls probability: `{<number>:<weight>}` */
 	weights: { [x: number]: number }
 	/** array of numbers that will be cycled through as weights */
 	baseNumbers: number[]
 	/** questions per base */
 	perQuestion: number
-}) => {
-	const { weights, perQuestion } = props
+	randomize_base: boolean
+}): TRandomFn => {
+	const { weights, perQuestion, randomize_base } = props
 
-	const baseNumbers = shuffle(props.baseNumbers)
-
-	console.log('baseNumbers:', baseNumbers)
-	console.log('per base:', perQuestion)
+	const baseNumbers = randomize_base ? shuffle([...props.baseNumbers]) : props.baseNumbers
 
 	const random = randomNumberFactory(weights)
-	const randomPair = randomPairFactory(weights)
 
-	type TMeta = { base?: number | undefined; baseChanged: boolean }
-	let meta: TMeta = { base: undefined, baseChanged: false }
+	let meta: TMeta = { base: undefined, baseChanged: false, last_question: false, completed: false }
 
 	const randomPair2: TRandomFn = (question, options) => {
-		// console.debug({ question, len: baseNumbers.length, perQuestion })
-
 		const previous = options?.previousPair
 
+		const last_question = question === baseNumbers.length * perQuestion
+
 		if (question > baseNumbers.length * perQuestion) {
-			let newMeta: TMeta
-			if (meta.base !== undefined) {
-				newMeta = { base: undefined, baseChanged: true }
-			} else if (meta.base === undefined && meta.baseChanged === true) {
-				newMeta = { base: undefined, baseChanged: false }
-			} else {
-				newMeta = meta
-			}
+			const newMeta: TMeta = { ...meta, last_question, completed: true }
 			meta = newMeta
-
-			let data = randomPair()
-
-			if (previous) {
-				let n: number = 1
-				while (isEqual(data.sort(), previous.sort()) && n <= 5) {
-					data = randomPair()
-					n++
-				}
-			}
-
-			return { data: randomPair(), meta }
+			return { data: [0, 0], meta: newMeta }
 		} else {
 			const idx = Math.floor((question - 1) / perQuestion)
 			const a = baseNumbers[idx]
@@ -115,9 +104,9 @@ export const randomPairFactory2 = (props: {
 			let newMeta: TMeta
 
 			if (meta.base !== a) {
-				newMeta = { base: a, baseChanged: true }
+				newMeta = { base: a, baseChanged: true, last_question, completed: false }
 			} else if (meta.base === a && meta.baseChanged === true) {
-				newMeta = { base: a, baseChanged: false }
+				newMeta = { base: a, baseChanged: false, last_question, completed: false }
 			} else {
 				newMeta = meta
 			}
@@ -139,7 +128,7 @@ export const checkAnswer = (operator: Operators, a: number, b: number, c: number
 	else return a + b === c
 }
 
-function shuffle(array: number[]) {
+export function shuffle(array: number[]) {
 	let currentIndex = array.length,
 		randomIndex
 

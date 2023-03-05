@@ -14,9 +14,7 @@ type QuestionPageProps = {
 }
 
 function consoleGroup(operator: Operators, newState: NumberPadState) {
-	console.group(
-		`question #${newState.item_number}: ${newState.question[0]} ${operator} ${newState.question[1]}, errors: ${newState.errors}, base: ${newState.base}`
-	)
+	return `question #${newState.item_number}: ${newState.question[0]} ${operator} ${newState.question[1]}, errors: ${newState.errors}, base: ${newState.base}`
 }
 
 export const QuestionPage = (props: QuestionPageProps) => {
@@ -30,6 +28,7 @@ export const QuestionPage = (props: QuestionPageProps) => {
 	})
 
 	const loadDateRef = useRef<number>(0)
+
 	const randomPairRef = useRef<TRandomFn>(undefined as any)
 	if (randomPairRef.current === undefined) {
 		console.groupEnd() // close group if we have one open from a previous component
@@ -40,7 +39,7 @@ export const QuestionPage = (props: QuestionPageProps) => {
 	const [state, setState] = useState<NumberPadState>(() => {
 		let firstQuestion = randomPairRef.current(1)
 
-		const newState = {
+		const newState: NumberPadState = {
 			answer: [],
 			errors: 0,
 			item_number: 1,
@@ -48,9 +47,11 @@ export const QuestionPage = (props: QuestionPageProps) => {
 			question: firstQuestion.data,
 			baseChanged: firstQuestion.meta.baseChanged,
 			base: firstQuestion.meta.base,
+			completed: false,
+			last_question: false,
 		}
 
-		consoleGroup(operator, newState)
+		console.group(consoleGroup(operator, newState))
 
 		return newState
 	})
@@ -82,7 +83,7 @@ export const QuestionPage = (props: QuestionPageProps) => {
 
 			const firstQuestion = randomPairRef.current(1) // set first question using current random pair
 
-			const newState = {
+			const newState: NumberPadState = {
 				answer: [],
 				errors: 0,
 				item_number: 1,
@@ -90,9 +91,11 @@ export const QuestionPage = (props: QuestionPageProps) => {
 				question: firstQuestion.data,
 				baseChanged: true,
 				base: firstQuestion.meta.base,
+				completed: false,
+				last_question: false,
 			}
 
-			consoleGroup(operator, newState)
+			console.group(consoleGroup(operator, newState))
 
 			setState(newState)
 		}
@@ -107,9 +110,9 @@ export const QuestionPage = (props: QuestionPageProps) => {
 			const isCorrect = checkAnswer(operator, v.question[0], v.question[1], submittedAnswer)
 
 			if (isCorrect) {
-				const newState = { ...state }
+				const newState: NumberPadState = { ...v }
 				let newQuestion = randomPairRef.current(newState.item_number + 1, {
-					previousPair: state.question,
+					previousPair: v.question,
 				})
 				newState.item_number++
 				newState.correct++
@@ -117,12 +120,14 @@ export const QuestionPage = (props: QuestionPageProps) => {
 				newState.baseChanged = newQuestion.meta.baseChanged
 				newState.base = newQuestion.meta.base
 				newState.answer = []
+				newState.last_question = newQuestion.meta.last_question
+				newState.completed = newQuestion.meta.completed
 				console.groupEnd()
-				consoleGroup(operator, newState)
+				console.group(consoleGroup(operator, newState))
 
 				return newState
 			} else {
-				const newState = { ...state }
+				const newState: NumberPadState = { ...v }
 				newState.answer = []
 				newState.errors++
 
@@ -136,28 +141,54 @@ export const QuestionPage = (props: QuestionPageProps) => {
 
 	const title: string = typeof titleFn === 'function' ? titleFn(state) : titleFn
 
-	return (
-		<Fragment>
-			<SafeTitle title={title} />
+	if (state.completed === true)
+		return (
+			<Fragment>
+				<Box sx={{ p: 1 }}>
+					<Box sx={{ p: 1, fontSize: '1.2rem', display: 'flex', width: '100%' }}>
+						<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
+							Answers: {state.item_number - 1}
+						</Box>
+						<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
+							Errors: {state.errors}
+						</Box>
+						<Box px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
+							Score: {state.correct - state.errors}
+						</Box>
+					</Box>
+					<Box sx={{ py: 1, px: 2, fontSize: '1.5rem', boxShadow: 4, m: 1 }}>
+						{state.answer.join(', ') || (
+							<Box sx={{ color: 'grey', fontStyle: 'italic' }}>Complete</Box>
+						)}
+					</Box>
+				</Box>
+			</Fragment>
+		)
+	else
+		return (
+			<Fragment>
+				<SafeTitle title={title} />
 
-			<Box sx={{ p: 1 }}>
-				<Box sx={{ p: 2, fontSize: '1.2rem', display: 'flex', width: '100%' }}>
-					<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
-						Question: {state.item_number}
+				<Box sx={{ p: 1 }}>
+					<Box sx={{ p: 2, fontSize: '1.2rem', display: 'flex', width: '100%' }}>
+						<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
+							Question: {state.item_number}
+						</Box>
+						<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
+							Errors: {state.errors}
+						</Box>
+						<Box px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
+							Score: {state.correct - state.errors}
+						</Box>
 					</Box>
-					<Box mr={1} px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
-						Errors: {state.errors}
-					</Box>
-					<Box px={1} sx={{ flexGrow: 1, boxShadow: 2 }}>
-						Score: {state.correct - state.errors}
-					</Box>
+					<Fragment>
+						<Box sx={{ p: 2, height: '80px', fontSize: '1.5rem' }}>
+							{state.question[0]} {operator} {state.question[1]} = {state.answer}
+						</Box>
+						<NumberPad state={state} setState={setState} onSubmit={onSubmit} />
+					</Fragment>
 				</Box>
-				<Box sx={{ p: 2, height: '80px', fontSize: '1.5rem' }}>
-					{state.question[0]} {operator} {state.question[1]} = {state.answer}
-				</Box>
-				<NumberPad state={state} setState={setState} onSubmit={onSubmit} />
-			</Box>
-		</Fragment>
-	)
+			</Fragment>
+		)
 }
 

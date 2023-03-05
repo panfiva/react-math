@@ -13,11 +13,13 @@ export type NumberPadState = {
 	question: [number, number]
 	baseChanged: boolean
 	base: number | undefined
+	last_question: boolean
+	completed: boolean
 }
 
-export const NumberPad = (props: {
-	state: NumberPadState
-	setState: Dispatch<SetStateAction<NumberPadState>>
+export const NumberPad = <T extends { answer: number[] }>(props: {
+	state: T
+	setState: Dispatch<SetStateAction<T>>
 	onSubmit: () => void
 }) => {
 	const { setState, onSubmit, state } = props
@@ -63,9 +65,9 @@ export const NumberPad = (props: {
 	)
 }
 
-function NumberButton(props: {
+function NumberButton<T extends { answer: number[] }>(props: {
 	number: number
-	setState: Dispatch<SetStateAction<NumberPadState>>
+	setState: Dispatch<SetStateAction<T>>
 }) {
 	const f = () => {
 		props.setState((v) => {
@@ -95,7 +97,10 @@ function NumberButton(props: {
 	)
 }
 
-function ClearButton(props: { icon: any; setState: Dispatch<SetStateAction<NumberPadState>> }) {
+function ClearButton<T extends { answer: number[] }>(props: {
+	icon: any
+	setState: Dispatch<SetStateAction<T>>
+}) {
 	const f = () => {
 		props.setState((v) => {
 			if (v.answer.length === 0) return v
@@ -116,9 +121,9 @@ function ClearButton(props: { icon: any; setState: Dispatch<SetStateAction<Numbe
 	)
 }
 
-function DeleteLastButton(props: {
+function DeleteLastButton<T extends { answer: number[] }>(props: {
 	icon: any
-	setState: Dispatch<SetStateAction<NumberPadState>>
+	setState: Dispatch<SetStateAction<T>>
 }) {
 	const f = () => {
 		props.setState((v) => {
