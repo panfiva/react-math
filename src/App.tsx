@@ -5,13 +5,13 @@ import { dataProvider } from './resources/dataProvider'
 import { Route } from 'react-router-dom'
 
 import { Apps } from './resources/Apps'
-import { QuestionPage } from './resources/QuestionPage'
+
 import { SelectBaseQuestionPage } from './resources/SelectBase'
 
 import { i18nProvider } from './lib/messages'
 import Layout from './Layout'
 
-import { randomPairFactory_pickBase, shuffle } from './lib/random'
+import { shuffle } from './lib/random'
 
 import merge from 'lodash/merge'
 import { Helmet } from 'react-helmet'
@@ -51,20 +51,18 @@ const theme = merge({}, defaultTheme, {
 const TITLE = 'Math App'
 
 const multiplicationWeights = { 2: 5, 3: 10, 4: 15, 5: 7, 6: 15, 7: 15, 8: 15, 9: 15 }
-const additionWeights = { 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10 }
-
-function randAddition() {
-	const weights = additionWeights
-	return randomPairFactory_pickBase({
-		weights,
-		baseNumbers: [1, 2, 3],
-		perQuestion: 25,
-		randomize_base: true,
-	})
-}
+const additionWeights = { 1: 5, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10 }
 
 export const Addition = () => {
-	return <QuestionPage operator='+' titleFn='Addition' randomFnFactory={randAddition} />
+	return (
+		<SelectBaseQuestionPage
+			operator='+'
+			title='Addition'
+			perQuestion={50}
+			weights={additionWeights}
+			starting_base={shuffle([3, 4, 5, 6, 7, 8, 9]).slice(0, 3)}
+		/>
+	)
 }
 
 export const Multiplication = () => {
@@ -79,12 +77,14 @@ export const Multiplication = () => {
 	)
 }
 
+const LoginPage = () => null
+
 function Resources() {
 	return (
 		<AdminUI
 			layout={Layout}
 			dashboard={Apps}
-			loginPage={() => null}
+			loginPage={LoginPage}
 			title={TITLE} // error page title
 			disableTelemetry
 		>

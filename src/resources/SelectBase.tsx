@@ -29,9 +29,10 @@ export const SelectBaseQuestionPage = (props: SelectBaseQuestionPageProps) => {
 	const { operator, title, weights, perQuestion, starting_base } = props
 	const dataProvider = useDataProvider()
 	const { data: refreshDate } = useQuery([''], () => dataProvider.getCurrentDate(), {
-		cacheTime: 3600000,
+		cacheTime: 3600 * 1000 * 48,
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
+		staleTime: 3600 * 1000 * 48,
 	})
 
 	const loadDateRef = useRef<number>(0)
@@ -97,6 +98,10 @@ export const SelectBaseQuestionPage = (props: SelectBaseQuestionPageProps) => {
 				<SafeTitle title={title} />
 
 				<Box sx={{ p: 1 }}>
+					<Box sx={{ py: 1, px: 1, fontSize: '1.2rem' }}>
+						{`Select base numbers (${perQuestion} questions per base number):`}
+					</Box>
+
 					<Box sx={{ py: 1, px: 2, fontSize: '1.5rem', boxShadow: 4, m: 1 }}>
 						{state.answer.join(', ') || (
 							<Box sx={{ color: 'grey', fontStyle: 'italic' }}>Enter base numbers</Box>

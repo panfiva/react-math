@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { Dispatch, SetStateAction } from 'react'
+import { SxProps, Theme } from '@mui/material'
 
 import ClearIcon from '@mui/icons-material/Clear'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -54,7 +55,7 @@ export const NumberPad = <T extends { answer: number[] }>(props: {
 			<Box py={2}>
 				<Button
 					variant='outlined'
-					sx={{ width: '100%' }}
+					sx={{ width: '100%', minHeight: '55px', borderRadius: 2, boxShadow: 2 }}
 					onClick={onSubmit}
 					disabled={submitDisabled}
 				>
@@ -63,6 +64,18 @@ export const NumberPad = <T extends { answer: number[] }>(props: {
 			</Box>
 		</Box>
 	)
+}
+
+const ButtonSx: SxProps<Theme> = {
+	borderRadius: '25px',
+	minWidth: '95px',
+	height: '75px',
+	mx: 1.2,
+	my: 1.2,
+	px: 1,
+	py: '3px',
+	fontSize: '1.5rem',
+	boxShadow: 2,
 }
 
 function NumberButton<T extends { answer: number[] }>(props: {
@@ -78,20 +91,7 @@ function NumberButton<T extends { answer: number[] }>(props: {
 	}
 
 	return (
-		<Button
-			variant='outlined'
-			onClick={f}
-			sx={{
-				borderRadius: '25px',
-				minWidth: '65px',
-				height: '55px',
-				mx: 1.2,
-				my: 1.2,
-				px: 1,
-				py: '3px',
-				fontSize: '1.5rem',
-			}}
-		>
+		<Button variant='outlined' onClick={f} sx={ButtonSx}>
 			{props.number}
 		</Button>
 	)
@@ -111,11 +111,7 @@ function ClearButton<T extends { answer: number[] }>(props: {
 	}
 
 	return (
-		<Button
-			variant='outlined'
-			onClick={f}
-			sx={{ borderRadius: '25px', minWidth: '65px', height: '55px', mx: 1.2, my: 1.2 }}
-		>
+		<Button variant='outlined' onClick={f} sx={ButtonSx}>
 			{props.icon}
 		</Button>
 	)
@@ -137,11 +133,7 @@ function DeleteLastButton<T extends { answer: number[] }>(props: {
 	}
 
 	return (
-		<Button
-			variant='outlined'
-			onClick={f}
-			sx={{ borderRadius: '25px', minWidth: '65px', height: '55px', mx: 1.2, my: 1.2 }}
-		>
+		<Button variant='outlined' onClick={f} sx={ButtonSx}>
 			{props.icon}
 		</Button>
 	)
